@@ -1,5 +1,8 @@
 package model;
-
+/**
+ * This class is an implementation of the factory pattern 
+ *
+ */
 public class EnglishFormatClock extends AbstractClock {
 
 	public EnglishFormatClock() {
