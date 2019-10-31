@@ -2,10 +2,13 @@ package controler;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.UnknownHostException;
 import java.util.HashMap;
+
 import javax.swing.Timer;
 
 import model.AbstractClock;
+import model.ClockFactory;
 import model.TimeSingleton;
 
 public class RefreshManager {
@@ -14,7 +17,8 @@ public class RefreshManager {
 	public static int MINUTES = 1;
 	public static int SECONDS = 2;
 	
-	private HashMap<AbstractClock, Integer> observers = new HashMap<AbstractClock, Integer>();
+	private HashMap<AbstractClock, Integer> observers_local = new HashMap<AbstractClock, Integer>();
+	private HashMap<AbstractClock, Integer> observers_atomic = new HashMap<AbstractClock, Integer>();
 	
 	public final static RefreshManager getInstance() {
 		if (instance == null) {
@@ -28,18 +32,37 @@ public class RefreshManager {
 		return RefreshManager.instance;
 	}
 	
-	public void registerObserver(AbstractClock observer, int refreshRate) {
-		this.observers.put(observer, refreshRate);
+	public void registerObserver(AbstractClock observer, int refreshRate, int timeSource) {
+		if (timeSource == ClockFactory.LOCAL_TIME) {
+			this.observers_local.put(observer, refreshRate);
+		}
+		if (timeSource == ClockFactory.ATOMIC_TIME) {
+			this.observers_local.put(observer, refreshRate);
+		}
 	}
 	
 	public void unregisterObserver(AbstractClock observer) {
-		this.observers.remove(observer);
+		try {
+			this.observers_local.remove(observer);
+			this.observers_atomic.remove(observer);
+		} catch(Exception e) {
+			
+		}
 	}
 	
 	public void notifyMinute() {
-		for (AbstractClock obs : observers.keySet()) {
-			if (observers.get(obs) == MINUTES) {
+		for (AbstractClock obs : observers_local.keySet()) {
+			if (observers_local.get(obs) == MINUTES) {
 				obs.notify(TimeSingleton.getInstance().getTimeFromComputer());
+			}
+		}
+		for (AbstractClock obs : observers_atomic.keySet()) {
+			if (observers_atomic.get(obs) == MINUTES) {
+				try {
+					obs.notify(TimeSingleton.getInstance().getAtomicTime());
+				} catch (UnknownHostException e) {
+					e.printStackTrace();
+				}
 			}
 		}
 	}
@@ -47,9 +70,18 @@ public class RefreshManager {
 	public void notifySecond() {
 		if (TimeSingleton.getInstance().getTimeFromComputer().getSecond() == 0)
 			notifyMinute();
-		for (AbstractClock obs : observers.keySet()) {
-			if (observers.get(obs) == SECONDS) {
+		for (AbstractClock obs : observers_local.keySet()) {
+			if (observers_local.get(obs) == SECONDS) {
 				obs.notify(TimeSingleton.getInstance().getTimeFromComputer());
+			}
+		}
+		for (AbstractClock obs : observers_atomic.keySet()) {
+			if (observers_atomic.get(obs) == SECONDS) {
+				try {
+					obs.notify(TimeSingleton.getInstance().getAtomicTime());
+				} catch (UnknownHostException e) {
+					e.printStackTrace();
+				}
 			}
 		}
 	}

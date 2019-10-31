@@ -8,9 +8,14 @@ public class EnglishFormatFactory extends ClockFactory {
 		super();
 	}
 	
-	public EnglishFormatClock createClock() {
+	public EnglishFormatClock createClock(int source) {
 		EnglishFormatClock ef = new EnglishFormatClock();
-		RefreshManager.getInstance().registerObserver(ef, RefreshManager.SECONDS);
+		if (source == this.LOCAL_TIME) {
+			RefreshManager.getInstance().registerObserver(ef, RefreshManager.SECONDS, source);
+		}
+		else {
+			RefreshManager.getInstance().registerObserver(ef, RefreshManager.SECONDS, source);
+		}
 		return ef;
 	}
 }

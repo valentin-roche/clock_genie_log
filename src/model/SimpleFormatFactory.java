@@ -8,9 +8,9 @@ public class SimpleFormatFactory extends ClockFactory {
 		super();
 	}
 	
-	public SimpleFormatClock createClock() {
+	public SimpleFormatClock createClock(int source) {
 		SimpleFormatClock sf = new SimpleFormatClock();
-		RefreshManager.getInstance().registerObserver(sf, RefreshManager.MINUTES);
+		RefreshManager.getInstance().registerObserver(sf, RefreshManager.MINUTES, source);
 		return sf;
 	}
 }

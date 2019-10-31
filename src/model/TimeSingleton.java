@@ -3,6 +3,8 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.time.LocalTime;
+import java.util.Date;
+
 import org.apache.commons.net.ntp.NTPUDPClient;
 import org.apache.commons.net.ntp.TimeInfo;
 import org.apache.commons.net.ntp.TimeStamp;
@@ -34,7 +36,7 @@ public final class TimeSingleton {
 		return new TimeStampApp(time.getHour(), time.getMinute(), time.getSecond());
 	}
 	
-	public TimeStamp getTimeFromNet() throws UnknownHostException {
+	public TimeStampApp getAtomicTime() throws UnknownHostException {
 		NTPUDPClient cli = new NTPUDPClient();
 		cli.setDefaultTimeout(10_000);
 		InetAddress inetAddress = InetAddress.getByName(SERVER_NAME);
@@ -53,10 +55,15 @@ public final class TimeSingleton {
 		
 		long currentTime = System.currentTimeMillis();
 	    long atomicNtpTime = TimeStamp.getNtpTime(currentTime + offset).getTime();
-
-	    System.out.println(TimeStamp.getNtpTime(atomicNtpTime + offset).getDate());
+	    Date ts = TimeStamp.getNtpTime(atomicNtpTime + offset).getDate();
+	    //System.out.println(TimeStamp.getNtpTime(atomicNtpTime + offset).getDate());
 	    
-		return null;
+	    TimeStampApp ret = new TimeStampApp();
+	    ret.setHour(ts.getHours());
+	    ret.setMinute(ts.getMinutes());
+	    ret.setSecond(ts.getSeconds());
+	    
+		return ret;
 	}
 }
 
