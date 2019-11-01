@@ -1,7 +1,5 @@
 package model;
 
-import org.apache.commons.net.ntp.TimeStamp;
-
 import view.ClockPanel;
 
 /**
