@@ -1,7 +1,6 @@
 package model;
 /**
- * This class is an implementation of the factory pattern 
- *
+ * This class is an implementation of the factory pattern displaying the english format.
  */
 public class EnglishFormatClock extends AbstractClock {
 
@@ -10,9 +9,11 @@ public class EnglishFormatClock extends AbstractClock {
 	}
 	
 	public void run() {
-		
 	}
 	
+	/**
+	 * Updates the clock's display using the current timestamp.
+	 */
 	public void refresh() {
 		TimeStampApp ts = this.getCurrentTime();
 		String period = "am";
