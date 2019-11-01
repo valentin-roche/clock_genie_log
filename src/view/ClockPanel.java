@@ -15,6 +15,9 @@ public class ClockPanel extends JPanel
 	private JLabel clock;
 	
 	//builders
+	/**
+	 * Builds the pannel
+	 */
     public ClockPanel()
     {
         setLayout(new BorderLayout());
